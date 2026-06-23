@@ -1,0 +1,443 @@
+# ReXGlue analysis hints for Libre40.
+#
+# Keep this file limited to observed function or switch-table hints from local
+# codegen/build/runtime logs. Do not paste generated game code here.
+
+# Observed during first codegen validation: unresolved branch targets not in any function.
+
+[functions."0x830FE420"]
+name = "sub_830FE420"
+
+[functions."0x831E93F8"]
+name = "sub_831E93F8"
+
+[functions."0x83422E68"]
+name = "sub_83422E68"
+
+[functions."0x82B92338"]
+name = "sub_82B92338"
+
+[functions."0x8340A178"]
+name = "sub_8340A178"
+
+# Observed during first runtime smoke after Runtime initialized successfully.
+
+[functions."0x8303E1A0"]
+name = "sub_8303E1A0"
+
+[functions."0x830483B0"]
+name = "sub_830483B0"
+
+[functions."0x8306C758"]
+name = "sub_8306C758"
+
+[functions."0x830808E0"]
+name = "sub_830808E0"
+
+[functions."0x83093270"]
+name = "sub_83093270"
+
+# Observed during the vtable/function-pointer smoke pass. The adjacent thunk was
+# found in the same private PE scan cluster as the runtime failure.
+
+[functions."0x830963F0"]
+name = "sub_830963F0"
+
+[functions."0x83096940"]
+name = "sub_83096940"
+
+# Scanner-confirmed missing startup vtable entries in the 0x821D0000-0x821F0000
+# data slice, added after the runtime progressed to 0x830A8DB0.
+
+[functions."0x83080C60"]
+name = "sub_83080C60"
+
+[functions."0x830A8DB0"]
+name = "sub_830A8DB0"
+
+[functions."0x830AA470"]
+name = "sub_830AA470"
+
+[functions."0x830AB798"]
+name = "sub_830AB798"
+
+[functions."0x830F64B0"]
+name = "sub_830F64B0"
+
+[functions."0x831055B0"]
+name = "sub_831055B0"
+
+# Observed after guarding the splash shader backend factory path.
+
+[functions."0x82F9E538"]
+name = "sub_82F9E538"
+
+[functions."0x82DDD638"]
+name = "sub_82DDD638"
+
+[functions."0x826CC608"]
+name = "sub_826CC608"
+
+[functions."0x82E38FA0"]
+name = "sub_82E38FA0"
+
+[functions."0x8344C738"]
+name = "sub_8344C738"
+
+# Observed/confirmed after the runtime reached the frontend soundbank path.
+# 0x834D2E18 was the fatal target; the other two were the only missing code
+# pointers in the same private vtable slice at 0x8225F02C-0x8225F0B4.
+
+[functions."0x834F75A0"]
+name = "sub_834F75A0"
+
+[functions."0x834D27E0"]
+name = "sub_834D27E0"
+
+[functions."0x834D2E18"]
+name = "sub_834D2E18"
+
+# Observed after the frontend vtable batch; the surrounding code-pointer table at
+# 0x83706D80-0x83706E7C was already registered except this target.
+
+[functions."0x826D7F88"]
+name = "sub_826D7F88"
+
+# Observed after 0x826D7F88; repeated vtable layouts containing this target had
+# all other code pointers already registered.
+
+[functions."0x82A1EDA8"]
+name = "sub_82A1EDA8"
+
+# Observed after 0x82A1EDA8 in a frontend vtable slice. 0x834D27E8 is the only
+# adjacent missing code pointer in that slice.
+
+[functions."0x834D1E48"]
+name = "sub_834D1E48"
+
+[functions."0x834D27E8"]
+name = "sub_834D27E8"
+
+# Observed after the 0x834D1E48 pair; these were the only missing code pointers
+# in the surrounding table at 0x822687AC-0x822688A8.
+
+[functions."0x835DF270"]
+name = "sub_835DF270"
+
+[functions."0x835DF278"]
+name = "sub_835DF278"
+
+[functions."0x835DF280"]
+name = "sub_835DF280"
+
+# Observed after the 0x835DF280 table batch; these were missing in the compact
+# table at 0x8220AFD8-0x8220B080.
+
+[functions."0x831CBF98"]
+name = "sub_831CBF98"
+
+[functions."0x831CBF50"]
+name = "sub_831CBF50"
+
+[functions."0x831CBF68"]
+name = "sub_831CBF68"
+
+[functions."0x831CBF80"]
+name = "sub_831CBF80"
+
+[functions."0x831AEAB0"]
+name = "sub_831AEAB0"
+
+[functions."0x831AEB70"]
+name = "sub_831AEB70"
+
+[functions."0x831AEB88"]
+name = "sub_831AEB88"
+
+# Observed after the compact table batch; the surrounding table at
+# 0x8220DEC0-0x8220DF28 had every adjacent code pointer already registered.
+
+[functions."0x831FDB60"]
+name = "sub_831FDB60"
+
+# Observed after 0x831FDB60; this was the only missing code pointer in the
+# surrounding table at 0x8220FE60-0x8220FF30.
+
+[functions."0x8322F130"]
+name = "sub_8322F130"
+
+# Observed after 0x8322F130. 0x831B80B8 was the fatal target; repeated table
+# layouts also had missing pair entry 0x831B80A8. The related 0x82212940 and
+# 0x82212E00 slices had one additional missing code pointer each.
+
+[functions."0x831B80A8"]
+name = "sub_831B80A8"
+
+[functions."0x831B80B8"]
+name = "sub_831B80B8"
+
+[functions."0x8326A0F0"]
+name = "sub_8326A0F0"
+
+[functions."0x8326F4F0"]
+name = "sub_8326F4F0"
+
+# Observed after pressing Start on the title screen; this was the only missing
+# code pointer in the surrounding table at 0x82277FE0-0x82278170.
+
+[functions."0x82374A28"]
+name = "sub_82374A28"
+
+# Observed after pressing Start with MnK enabled; this dispatch thunk is adjacent
+# to already-generated 0x82377350/0x82377360/0x82377370 functions.
+
+[functions."0x82377340"]
+name = "sub_82377340"
+
+# Observed after Start reached profile/content probing and began opening the new
+# menu path. These were the only missing adjacent code pointers in the table
+# slice at 0x8220F5FC-0x8220F71C.
+
+[functions."0x8321C850"]
+name = "sub_8321C850"
+
+[functions."0x8321C868"]
+name = "sub_8321C868"
+
+[functions."0x8321C880"]
+name = "sub_8321C880"
+
+[functions."0x8321C898"]
+name = "sub_8321C898"
+
+[functions."0x8321C8B0"]
+name = "sub_8321C8B0"
+
+[functions."0x8321C8C8"]
+name = "sub_8321C8C8"
+
+[functions."0x8321C8E0"]
+name = "sub_8321C8E0"
+
+[functions."0x8321C8F8"]
+name = "sub_8321C8F8"
+
+# Observed while navigating the proper front-end menu after the menu milestone.
+# Repeated menu/content table layouts had every adjacent code pointer already
+# registered except this target.
+
+[functions."0x831CB2B0"]
+name = "sub_831CB2B0"
+
+# Observed after selecting campaign options from the proper front-end menu.
+# 0x82C06340 was the fatal target and appears in six related table layouts.
+# Two early layouts also had one adjacent scanner-confirmed missing code pointer.
+
+[functions."0x82C06340"]
+name = "sub_82C06340"
+
+[functions."0x8280DAD0"]
+name = "sub_8280DAD0"
+
+[functions."0x8280E5C0"]
+name = "sub_8280E5C0"
+
+# Observed after entering campaign loading. 0x83525AE0 was the fatal target in
+# repeated campaign-load object tables; 0x83526270 was the only other missing
+# code pointer in the same local table slice.
+
+[functions."0x83525AE0"]
+name = "sub_83525AE0"
+
+[functions."0x83526270"]
+name = "sub_83526270"
+
+# Observed after the campaign-load rebuild. 0x834F3650 was the fatal target;
+# the local table at 0x8225F7C8-0x8225F8E8 had two adjacent missing code
+# pointers and every other nearby code pointer was already registered.
+
+[functions."0x834F3650"]
+name = "sub_834F3650"
+
+[functions."0x834F3658"]
+name = "sub_834F3658"
+
+[functions."0x834F3660"]
+name = "sub_834F3660"
+
+# Observed after the 0x834F3650 campaign-load rebuild. 0x82D98500 appeared in
+# two low-data function table slices at 0x8200D054-0x8200D1B4 and
+# 0x8200D684-0x8200D7E4; every adjacent code pointer was already registered.
+
+[functions."0x82D98500"]
+name = "sub_82D98500"
+
+# Observed after the 0x82D98500 campaign-load rebuild. 0x82BF4B90 was the only
+# missing code pointer in the local table at 0x820E1B10-0x820E1CB0.
+
+[functions."0x82BF4B90"]
+name = "sub_82BF4B90"
+
+# Observed after the 0x82BF4B90 campaign-load rebuild. 0x82DED4C8 was the only
+# missing code pointer in the repeated table cluster at 0x82169490-0x82169630.
+
+[functions."0x82DED4C8"]
+name = "sub_82DED4C8"
+
+# Observed after the 0x82DED4C8 campaign-load rebuild. 0x8245CE28 was the fatal
+# target; 0x8245CE78 was the only adjacent missing code pointer in the local
+# table at 0x82031544-0x820316E4.
+
+[functions."0x8245CE28"]
+name = "sub_8245CE28"
+
+[functions."0x8245CE78"]
+name = "sub_8245CE78"
+
+# Observed after the 0x8245CE28 campaign-load rebuild. 0x82D7BEC0 was the fatal
+# target; 21 repeated table layouts consistently had three missing sibling code
+# pointers in this local cluster.
+
+[functions."0x82D7BE40"]
+name = "sub_82D7BE40"
+
+[functions."0x82D7BE98"]
+name = "sub_82D7BE98"
+
+[functions."0x82D7BEC0"]
+name = "sub_82D7BEC0"
+
+# Observed after the 0x82D7BEC0 campaign-load rebuild. 0x82E476F0 was the fatal
+# target; the local table at 0x82183BAC-0x82183D2C had four adjacent missing
+# code pointers in the same 0x82E47xxx cluster.
+
+[functions."0x82E476F0"]
+name = "sub_82E476F0"
+
+[functions."0x82E47808"]
+name = "sub_82E47808"
+
+[functions."0x82E478A0"]
+name = "sub_82E478A0"
+
+[functions."0x82E47920"]
+name = "sub_82E47920"
+
+[functions."0x82E47B80"]
+name = "sub_82E47B80"
+
+# Observed after the 0x82E476F0 campaign-load rebuild. 0x8297F528 appeared in
+# 26 repeated table layouts and was the only missing code pointer in each slice.
+
+[functions."0x8297F528"]
+name = "sub_8297F528"
+
+# Observed after the 0x8297F528 campaign-load rebuild. 0x826884A0 was the fatal
+# target and the only missing code pointer in the local callback table at
+# 0x8208DE68-0x8208DFC8.
+
+[functions."0x826884A0"]
+name = "sub_826884A0"
+
+# Observed after the 0x826884A0 campaign-load rebuild. 0x828F45E0 was the fatal
+# target in repeated campaign-load table layouts; 0x82405908 was the only
+# adjacent missing code pointer in the same local table windows.
+
+[functions."0x828F45E0"]
+name = "sub_828F45E0"
+
+[functions."0x82405908"]
+name = "sub_82405908"
+
+# Observed after interacting with the first campaign vault wall. 0x82DF5890 was
+# the fatal target; both table windows containing it also had adjacent missing
+# code pointer 0x828855C0.
+
+[functions."0x82DF5890"]
+name = "sub_82DF5890"
+
+[functions."0x828855C0"]
+name = "sub_828855C0"
+
+# Observed after progressing farther past the first campaign vault wall.
+# 0x825DE8B8 was the fatal target and the only missing code pointer in its local
+# table window.
+
+[functions."0x825DE8B8"]
+name = "sub_825DE8B8"
+
+# Observed after the 0x825DE8B8 campaign rebuild. 0x82D86F68 was the fatal
+# target and the only missing code pointer in its local table window.
+
+[functions."0x82D86F68"]
+name = "sub_82D86F68"
+
+# Observed after the 0x82D86F68 campaign rebuild. 0x82663D40 was the fatal
+# target in related table windows; adjacent windows also had missing code
+# pointers 0x826636D8 and 0x82663DD0.
+
+[functions."0x826636D8"]
+name = "sub_826636D8"
+
+[functions."0x82663D40"]
+name = "sub_82663D40"
+
+[functions."0x82663DD0"]
+name = "sub_82663DD0"
+
+# Observed after progressing farther in campaign. 0x8344CD10 was the fatal
+# target in the local function-pointer table at 0x82250CD0-0x82250D4C. The
+# other entries here were the only missing executable code pointers in that
+# table window. Use the sister project's explicit-name style for new hints.
+
+[functions."0x8344CB60"]
+name = "sub_8344CB60"
+
+[functions."0x8344CB78"]
+name = "sub_8344CB78"
+
+[functions."0x8344CBB0"]
+name = "sub_8344CBB0"
+
+[functions."0x8344CBE0"]
+name = "sub_8344CBE0"
+
+[functions."0x8344CBF8"]
+name = "sub_8344CBF8"
+
+[functions."0x8344CC10"]
+name = "sub_8344CC10"
+
+[functions."0x8344CC48"]
+name = "sub_8344CC48"
+
+[functions."0x8344CC60"]
+name = "sub_8344CC60"
+
+[functions."0x8344CD10"]
+name = "sub_8344CD10"
+
+# Observed after firing a gun in campaign. 0x82C41A08 was the fatal target in
+# the local action/callback table at 0x8213E300-0x8213E37C. The other entries
+# here were the only missing executable code pointers in that table window.
+
+[functions."0x82C41A08"]
+name = "sub_82C41A08"
+
+[functions."0x82C41A28"]
+name = "sub_82C41A28"
+
+[functions."0x82C41A50"]
+name = "sub_82C41A50"
+
+[functions."0x82C41AC8"]
+name = "sub_82C41AC8"
+
+[functions."0x82C41AF0"]
+name = "sub_82C41AF0"
+
+[functions."0x82C41B10"]
+name = "sub_82C41B10"
+
+[functions."0x82C423D0"]
+name = "sub_82C423D0"
