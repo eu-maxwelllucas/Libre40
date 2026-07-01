@@ -6,6 +6,14 @@ A [ReXGlue](https://github.com/rexglue)-based native PC static recompilation of
 You must provide your own legally obtained disc image. This repository contains **no**
 game assets, retail binaries, code generated from a retail binary, keys, or downloads.
 
+## Status
+
+**Work in progress**
+
+Game is playable single player. Right now the movies don't play as expected and you see a black screen, this is a known bug I am fixing but if you let those movies play the game will still boot and play.
+
+Were also working on getting local and online multiplayer working again.
+
 ## Dependencies
 
 - **CMake** 3.25+ and **Ninja**
