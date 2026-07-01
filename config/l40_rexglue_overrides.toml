@@ -441,3 +441,38 @@ name = "sub_82C41B10"
 
 [functions."0x82C423D0"]
 name = "sub_82C423D0"
+
+# Observed after progressing into the highrise/China guard segment. 0x8287AC18
+# was the fatal target in the local object table at 0x820CC240-0x820CC2FC.
+# 0x8287ADA8 was the only other missing executable code pointer in that window.
+
+[functions."0x8287AC18"]
+name = "sub_8287AC18"
+
+[functions."0x8287ADA8"]
+name = "sub_8287ADA8"
+
+# Observed after progressing farther through the highrise segment. 0x823B1118
+# was the fatal target in the low-data function table at 0x8200D7D0-0x8200D89C.
+# The other entries here were the only missing executable code pointers in that
+# table window.
+
+[functions."0x823B1118"]
+name = "sub_823B1118"
+
+[functions."0x823B1128"]
+name = "sub_823B1128"
+
+[functions."0x823B1138"]
+name = "sub_823B1138"
+
+[functions."0x823B1148"]
+name = "sub_823B1148"
+
+# Observed after progressing farther in the highrise mission path. 0x824B6F50
+# was the fatal target in six repeated function table layouts at 0x8203D434,
+# 0x8203D974, 0x8203DEB4, 0x8203E41C, 0x8203E984, and 0x8203EEC4. It was the
+# only missing executable code pointer in those table windows.
+
+[functions."0x824B6F50"]
+name = "sub_824B6F50"

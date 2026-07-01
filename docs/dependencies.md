@@ -2,45 +2,23 @@
 
 ## ReXGlue SDK
 
-Use the official ReXGlue SDK repository. Do not use local forks for Libre40 unless an SDK-level issue is proven and explicitly reviewed.
+The official ReXGlue SDK ships as the `tools/rexglue-sdk` git submodule, pinned to commit
+`e8ce24f` (SDK `0.8.1.4`). Libre40 builds against vanilla ReXGlue.
 
-Default local layout:
+Fetch it with the repo:
 
-```text
-Libre40/
-  tools/rexglue-sdk/
+```
+git clone --recurse-submodules <repo_url>
+# or, if already cloned:
+git submodule update --init --recursive
 ```
 
-Clone:
-
-```powershell
-git clone --recursive https://github.com/rexglue/rexglue-sdk.git tools\rexglue-sdk
-```
-
-Build:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\build-rexglue-official.ps1
-```
-
-On Windows, the build helper materializes libmspack symlink placeholders inside the ignored SDK checkout when Git checked them out as text files. It also defaults Clang builds to `-mssse3`, matching the current official SDK build needs observed in the Army project.
-
-The project build script defaults to:
-
-```text
-tools\rexglue-sdk\out\install\win-amd64-nmake
-```
-
-## Extraction Tools
-
-`scripts\extract-game.ps1` defaults to this repo's local 360tools snapshot:
-
-```text
-tools\360tools
-```
-
-Pass `-ToolsRoot` to use another local checkout.
+Build it once (see the [README](../README.md)). On Windows,
+`scripts/repair_sdk_symlinks.py` first materializes the SDK's libmspack symlinks that Git
+checked out as text placeholders. The SDK and this project are both built with `-mssse3`.
 
 ## Game Data
 
-This project does not provide game files. Put your own legal extraction in ignored `game/`.
+This project provides no game files. Put your own legal disc image in `iso/` and run
+`python scripts/extract_iso.py` to produce `game/` (pure-Python XDVDFS extractor, standard
+library only). See [extraction.md](extraction.md).

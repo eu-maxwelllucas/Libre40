@@ -16,9 +16,10 @@ config/generated/
 ppc/
 
 # Local toolchains, captures, and outputs.
-tools/rexglue-sdk/
-tools/360tools/
-tools/XenonRecomp/
+# tools/rexglue-sdk is a git submodule (the official ReXGlue SDK); keep it,
+# ignore anything else dropped in tools/ (360tools, XenonRecomp, ...).
+tools/*
+!tools/rexglue-sdk
 rexglue-install/
 .venv/
 .tmp/

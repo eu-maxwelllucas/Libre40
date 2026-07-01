@@ -1,0 +1,33 @@
+{
+  "targets": [
+    {
+      "file": "generated/default/l40_recomp.81.cpp",
+      "labels": [
+        "loc_l40_skip_first_splash_shader_backend",
+        "loc_l40_skip_second_splash_shader_backend"
+      ],
+      "segments": [
+        {
+          "description": "first splash shader/backend factory guard",
+          "needle": "\t// bl 0x82ec1ca0\n\tctx.lr = 0x82CEDC84;\n\tsub_82EC1CA0(ctx, base);\n\t// lwz r3,96(r1)",
+          "replacement": "\t// bl 0x82ec1ca0\n\tctx.lr = 0x82CEDC84;\n\tsub_82EC1CA0(ctx, base);\n\tif (ctx.r3.s32 < 0 || REX_LOAD_U32(ctx.r1.u32 + 96) < 0x1000) {\n\t\tREXLOG_WARN(\"L40 workaround: first splash shader backend failed rc=0x{:08X} out=0x{:08X}; skipping dereference\",\n\t\t            ctx.r3.u32, REX_LOAD_U32(ctx.r1.u32 + 96));\n\t\tgoto loc_l40_skip_first_splash_shader_backend;\n\t}\n\t// lwz r3,96(r1)"
+        },
+        {
+          "description": "first splash shader/backend skip label",
+          "needle": "\t// lwz r3,17148(r29)\n\tctx.r3.u64 = REX_LOAD_U32(ctx.r29.u32 + 17148);",
+          "replacement": "\t// lwz r3,17148(r29)\nloc_l40_skip_first_splash_shader_backend:\n\tctx.r3.u64 = REX_LOAD_U32(ctx.r29.u32 + 17148);"
+        },
+        {
+          "description": "second splash shader/backend factory guard",
+          "needle": "\t// bl 0x82ec1ca0\n\tctx.lr = 0x82CEDD08;\n\tsub_82EC1CA0(ctx, base);\n\t// lwz r3,96(r1)",
+          "replacement": "\t// bl 0x82ec1ca0\n\tctx.lr = 0x82CEDD08;\n\tsub_82EC1CA0(ctx, base);\n\tif (ctx.r3.s32 < 0 || REX_LOAD_U32(ctx.r1.u32 + 96) < 0x1000) {\n\t\tREXLOG_WARN(\"L40 workaround: second splash shader backend failed rc=0x{:08X} out=0x{:08X}; skipping dereference\",\n\t\t            ctx.r3.u32, REX_LOAD_U32(ctx.r1.u32 + 96));\n\t\tgoto loc_l40_skip_second_splash_shader_backend;\n\t}\n\t// lwz r3,96(r1)"
+        },
+        {
+          "description": "second splash shader/backend skip label",
+          "needle": "\t// bctrl \n\tctx.lr = 0x82CEDD3C;\n\tREX_CALL_INDIRECT_FUNC(ctx.ctr.u32);\n\t// addi r1,r1,192\n\tctx.r1.s64 = ctx.r1.s64 + 192;",
+          "replacement": "\t// bctrl \n\tctx.lr = 0x82CEDD3C;\n\tREX_CALL_INDIRECT_FUNC(ctx.ctr.u32);\n\t// addi r1,r1,192\nloc_l40_skip_second_splash_shader_backend:\n\tctx.r1.s64 = ctx.r1.s64 + 192;"
+        }
+      ]
+    }
+  ]
+}
