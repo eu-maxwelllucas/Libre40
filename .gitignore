@@ -26,7 +26,6 @@ rexglue-install/
 artifacts/
 logs/
 *.log
-*.png
 *.rdc
 
 # CMake/build/install outputs.
