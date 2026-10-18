@@ -6,17 +6,109 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build:
     runs-on: windows-2022
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Authenticate to Google Cloud
+        id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/drive.readonly
+
+      - name: Download game files from Google Drive
+        shell: pwsh
+        env:
+          DRIVE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $api = 'https://www.googleapis.com/drive/v3/files'
+          $headers = @{ Authorization = "Bearer $env:DRIVE_ACCESS_TOKEN" }
+
+          $gameDir = Join-Path $env:GITHUB_WORKSPACE 'game'
+          $assetsDir = Join-Path $gameDir 'AO2Game'
+          New-Item -ItemType Directory -Force -Path $gameDir | Out-Null
+
+          function Download-DriveFile([string]$fileId, [string]$destination) {
+            $encodedId = [uri]::EscapeDataString($fileId)
+            $url = "$api/$encodedId`?alt=media"
+            Write-Host "Baixando arquivo: $destination"
+            Invoke-WebRequest -Uri $url -Headers $headers -OutFile $destination
+          }
+
+          function Get-DriveChildren([string]$parentId) {
+            $items = @()
+            $pageToken = $null
+
+            do {
+              $query = "'$parentId' in parents and trashed = false"
+              $parameters = @{
+                q = $query
+                fields = 'nextPageToken,files(id,name,mimeType)'
+                pageSize = '1000'
+              }
+
+              if ($pageToken) {
+                $parameters.pageToken = $pageToken
+              }
+
+              $queryString = ($parameters.GetEnumerator() | ForEach-Object {
+                [uri]::EscapeDataString($_.Key) + '=' +
+                [uri]::EscapeDataString([string]$_.Value)
+              }) -join '&'
+
+              $response = Invoke-RestMethod `
+                -Uri "$api`?$queryString" `
+                -Headers $headers `
+                -Method Get
+
+              if ($response.files) {
+                $items += $response.files
+              }
+
+              $pageToken = $response.nextPageToken
+            } while ($pageToken)
+
+            return $items
+          }
+
+          function Download-DriveFolder([string]$folderId, [string]$destinationDir) {
+            New-Item -ItemType Directory -Force -Path $destinationDir | Out-Null
+
+            foreach ($item in (Get-DriveChildren $folderId)) {
+              $destination = Join-Path $destinationDir $item.name
+
+              if ($item.mimeType -eq 'application/vnd.google-apps.folder') {
+                Download-DriveFolder $item.id $destination
+              } else {
+                Download-DriveFile $item.id $destination
+              }
+            }
+          }
+
+          $defaultXexId = '1Nq2FnMHVrw74EXV6P_ek7tP0I_Mf_nt-'
+          $assetsFolderId = '1j6fdQrYvYw9ah658oTaOuVkup6xP5ra-'
+
+          Download-DriveFile $defaultXexId (Join-Path $gameDir 'default.xex')
+          Download-DriveFolder $assetsFolderId $assetsDir
+
+          if (-not (Test-Path (Join-Path $gameDir 'default.xex'))) {
+            throw 'O download de game/default.xex falhou.'
+          }
+
+          Write-Host 'Download concluído.'
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,14 +124,15 @@ jobs:
       - name: Install LLVM
         shell: pwsh
         run: |
-          if (-not (Test-Path "C:\Program Files\LLVM\bin\clang.exe")) {
-            winget install --id LLVM.LLVM --exact --silent `
-              --accept-package-agreements --accept-source-agreements
+          if (-not (Test-Path 'C:\Program Files\LLVM\bin\clang.exe')) {
+            winget install --id LLVM.LLVM --exact --silent --accept-package-agreements --accept-source-agreements
           }
-          if (-not (Test-Path "C:\Program Files\LLVM\bin\clang.exe")) {
-            throw "LLVM/Clang não foi encontrado."
+
+          if (-not (Test-Path 'C:\Program Files\LLVM\bin\clang.exe')) {
+            throw 'LLVM/Clang não foi encontrado.'
           }
-          "C:\Program Files\LLVM\bin" |
+
+          'C:\Program Files\LLVM\bin' |
             Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Set up MSVC environment
@@ -47,15 +140,18 @@ jobs:
         with:
           arch: x64
 
-      - name: Check game files
+      - name: Verify game files
         shell: pwsh
         run: |
-          if (Test-Path "game\default.xex") {
-            Write-Host "Arquivos do jogo encontrados."
-          } else {
-            Write-Host "ISO/arquivos do jogo ausentes."
-            Write-Host "A compilação final será ignorada."
+          if (-not (Test-Path 'game\default.xex')) {
+            throw 'game/default.xex não foi baixado.'
           }
+
+          if (-not (Test-Path 'game\AO2Game')) {
+            throw 'A pasta game/AO2Game não foi criada.'
+          }
+
+          Write-Host 'Arquivos do jogo encontrados.'
 
       - name: Repair SDK symlinks
         shell: pwsh
@@ -76,24 +172,21 @@ jobs:
             --config Release --target install --parallel 2
 
       - name: Generate game code
-        if: ${{ hashFiles('game/default.xex') != '' }}
         shell: pwsh
         run: python scripts/codegen.py
 
       - name: Configure Libre40
-        if: ${{ hashFiles('game/default.xex') != '' }}
         shell: pwsh
         run: cmake --preset release
 
       - name: Build Libre40
-        if: ${{ hashFiles('game/default.xex') != '' }}
         shell: pwsh
         run: |
           cmake --build build/l40-ninja-release `
             --target l40 --parallel 2
 
       - name: Upload executable
-        if: ${{ hashFiles('game/default.xex') != '' && success() }}
+        if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
           name: Libre40-Windows-x64
