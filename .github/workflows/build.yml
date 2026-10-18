@@ -1,0 +1,101 @@
+
+name: Build Libre40
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Set up CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Install LLVM
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "C:\Program Files\LLVM\bin\clang.exe")) {
+            winget install --id LLVM.LLVM --exact --silent `
+              --accept-package-agreements --accept-source-agreements
+          }
+          if (-not (Test-Path "C:\Program Files\LLVM\bin\clang.exe")) {
+            throw "LLVM/Clang não foi encontrado."
+          }
+          "C:\Program Files\LLVM\bin" |
+            Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Check game files
+        shell: pwsh
+        run: |
+          if (Test-Path "game\default.xex") {
+            Write-Host "Arquivos do jogo encontrados."
+          } else {
+            Write-Host "ISO/arquivos do jogo ausentes."
+            Write-Host "A compilação final será ignorada."
+          }
+
+      - name: Repair SDK symlinks
+        shell: pwsh
+        run: python scripts/repair_sdk_symlinks.py
+
+      - name: Configure ReXGlue SDK
+        shell: pwsh
+        run: |
+          cmake --preset win-amd64 -S tools/rexglue-sdk `
+            -DCMAKE_C_FLAGS=-mssse3 `
+            -DCMAKE_CXX_FLAGS=-mssse3 `
+            -DREXGLUE_ENABLE_TRACY=OFF
+
+      - name: Build ReXGlue SDK
+        shell: pwsh
+        run: |
+          cmake --build tools/rexglue-sdk/out/build/win-amd64 `
+            --config Release --target install --parallel 2
+
+      - name: Generate game code
+        if: ${{ hashFiles('game/default.xex') != '' }}
+        shell: pwsh
+        run: python scripts/codegen.py
+
+      - name: Configure Libre40
+        if: ${{ hashFiles('game/default.xex') != '' }}
+        shell: pwsh
+        run: cmake --preset release
+
+      - name: Build Libre40
+        if: ${{ hashFiles('game/default.xex') != '' }}
+        shell: pwsh
+        run: |
+          cmake --build build/l40-ninja-release `
+            --target l40 --parallel 2
+
+      - name: Upload executable
+        if: ${{ hashFiles('game/default.xex') != '' && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Libre40-Windows-x64
+          path: build/l40-ninja-release/l40.exe
+          if-no-files-found: error
